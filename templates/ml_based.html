@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ML-based Detection</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>SentinelNet</h2>
+        <ul>
+            <li><a href="/dashboard">Overview</a></li>
+            <li><a href="/rule_based">Rule-based Detection</a></li>
+            <li><a href="/ml_based">ML-based Detection</a></li>
+            <li><a href="/honeycap">HoneyCap Activity</a></li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <h1>ML-based Detection</h1>
+        <div class="grid">
+            <div class="chart-card">
+                <canvas id="mlGraph" height="250"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>Detected IPs</h3>
+                <div class="badge-group">
+                    {% for ip, status in ml_detected.items() %}
+                    <span class="ml-badge">{{ ip }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const mlGraphData = {{ ml_graph_data | tojson | safe }};
+        if(document.getElementById('mlGraph')) {
+            const mlCtx = document.getElementById('mlGraph').getContext('2d');
+
+            // Limit data points to last 30 for better readability
+            const maxPoints = 30;
+            const timestamps = mlGraphData.timestamps.slice(-maxPoints);
+            const counts = mlGraphData.counts.slice(-maxPoints);
+
+            new Chart(mlCtx, {
+                type: 'line',
+                data: {
+                    labels: timestamps,
+                    datasets: [{
+                        label: 'ML Detections Over Time',
+                        data: counts,
+                        borderColor: '#f97316',
+                        backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    scales: { y: { beginAtZero: true }}
+                }
+            });
+        }
+    </script>
+</body>
+</html>

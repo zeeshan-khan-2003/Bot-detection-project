@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>SentinelNet</h2>
+        <ul>
+            <li><a href="/dashboard">Overview</a></li>
+            <li><a href="/rule_based">Rule-based Detection</a></li>
+            <li><a href="/ml_based">ML-based Detection</a></li>
+            <li><a href="/honeycap">HoneyCap Activity</a></li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <h1>Dashboard Overview</h1>
+        <div class="section">
+            <h3>HoneyCap Triggers</h3>
+            <div class="grid">
+                <div class="chart-card">
+                    <canvas id="honeypotGraph" height="150"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h3>Triggered IPs (Honeypot)</h3>
+                    {% if honeypot_ips %}
+                    <div class="badge-group">
+                        {% for ip in honeypot_ips %}
+                        <span class="ml-badge">{{ ip }}</span>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="no-activity-message">No honeypot triggers in the last 60 seconds.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            const honeypotData = {{ honeypot_graph_data | tojson | safe }};
+            const ctx = document.getElementById('honeypotGraph').getContext('2d');
+
+            // Limit data points to last 30 for better readability
+            const maxPoints = 30;
+            const timestamps = honeypotData.timestamps.slice(-maxPoints);
+            const counts = honeypotData.counts.slice(-maxPoints);
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: timestamps,
+                    datasets: [{
+                        label: 'HoneyCap Activity',
+                        data: counts,
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        </script>
+    </div>
+</body>
+</html>

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DDoS Protection Dashboard</title>
+    <style>
+        body { background-color: #0f172a; color: #f1f5f9; font-family: Arial; padding: 30px; }
+        h1, h2, h3 { color: #38bdf8; }
+        .section { margin-bottom: 30px; padding: 20px; background: #1e293b; border-radius: 10px; border: 1px solid #334155; }
+        ul { list-style-type: none; padding: 0; }
+        ul li { margin-bottom: 6px; }
+        .no-activity-message {
+            background-color: #334155;
+            padding: 10px;
+            border-radius: 6px;
+            font-style: italic;
+            color: #94a3b8;
+        }
+        .chart-card {
+            padding: 30px;
+        }
+
+        .badge-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .ml-badge {
+            font-size: 12px;
+            padding: 3px 6px;
+            background-color: #f97316;
+            color: white;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .data-table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        .data-table th, .data-table td {
+            border-bottom: 1px solid #64748b;
+            padding: 8px;
+            text-align: left;
+        }
+        .data-table th {
+            background-color: #1e293b;
+            color: #38bdf8;
+        }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 220px;
+            background-color: #1e293b;
+            padding: 30px 20px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            overflow-y: auto;
+        }
+        .sidebar h2 {
+            color: #38bdf8;
+            margin-bottom: 20px;
+        }
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .sidebar ul li {
+            margin: 15px 0;
+        }
+        .sidebar ul li a {
+            color: #f1f5f9;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .sidebar ul li a:hover {
+            text-decoration: underline;
+        }
+        .main-content {
+            margin-left: 240px;
+        }
+        canvas {
+            max-width: 100%;
+        }
+        .summary-cards {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+        .summary-card {
+            flex: 1;
+            min-width: 150px;
+            background-color: #1e293b;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #334155;
+            text-align: center;
+        }
+        .summary-card h3 {
+            margin: 0 0 10px;
+        }
+        .summary-total { color: #facc15; }
+        .summary-honeycap { color: #f87171; }
+        .summary-rule { color: #38bdf8; }
+        .summary-ml { color: #f97316; }
+
+        .grid-charts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit,minmax(400px,1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        input[type="datetime-local"] {
+          padding: 10px 14px;
+          border: 2px solid #38bdf8; /* bright blue border */
+          border-radius: 8px;
+          background-color: #1e293b; /* dark bg matching theme */
+          color: #f1f5f9;
+          font-size: 16px;
+          font-weight: 500;
+          transition: border-color 0.3s ease, box-shadow 0.3s ease;
+          box-shadow: none;
+          outline: none;
+          width: 200px;
+          cursor: pointer;
+        }
+
+        input[type="datetime-local"]:hover {
+          border-color: #0ea5e9; /* lighter blue on hover */
+          box-shadow: 0 0 8px rgba(14, 165, 233, 0.6);
+        }
+
+        input[type="datetime-local"]:focus {
+          border-color: #38bdf8;
+          box-shadow: 0 0 12px rgba(56, 221, 248, 0.9);
+          background-color: #334155; /* slightly lighter bg on focus */
+          color: #e0e7ff;
+        }
+
+        label[for="start"], label[for="end"] {
+          font-weight: 600;
+          font-size: 14px;
+          color: #a5b4fc;
+          margin-right: 8px;
+          user-select: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>SentinelNet</h2>
+        <ul>
+            <li><a href="/dashboard">Overview</a></li>
+            <li><a href="/rule_based">Rule-based Detection</a></li>
+            <li><a href="/ml_based">ML-based Detection</a></li>
+            <li><a href="/honeycap">HoneyCap Activity</a></li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <div style="text-align: right; margin-bottom: 20px;">
+          <a href="/export" style="background-color: #38bdf8; color: #0f172a; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">
+            Export Logs
+          </a>
+        </div>
+
+        <h1>DDoS Monitoring Dashboard</h1>
+
+        <!-- Summary Cards -->
+        <div class="summary-cards">
+            <div class="summary-card summary-total">
+                <h3>Total Requests</h3>
+                <p style="font-size: 24px;">{{ total }}</p>
+            </div>
+            <div class="summary-card summary-honeycap">
+                <h3>HoneyCap Hits</h3>
+                <p style="font-size: 24px;">{{ honeypot_hits }}</p>
+            </div>
+            <div class="summary-card summary-rule">
+                <h3>Rule-based Detections</h3>
+                <p style="font-size: 24px;">{{ ddos_ips|length }}</p>
+            </div>
+            <div class="summary-card summary-ml">
+                <h3>ML Detections</h3>
+                <p style="font-size: 24px;">{{ ml_count }}</p>
+            </div>
+        </div>
+
+        <!-- Grid with charts -->
+        <div class="grid-charts">
+            <div class="section">
+                <h3>Rule-based Detection</h3>
+                <div style="height: 450px; padding: 10px; background: #1e293b; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                    <canvas id="ipChart"></canvas>
+                </div>
+            </div>
+            <div class="section">
+                <h3>HoneyCap Triggers</h3>
+                <canvas id="honeypotGraph" height="200"></canvas>
+            </div>
+            <div class="section">
+                <h3>Bot vs Normal Traffic</h3>
+                <p style="color: white;">Total Requests: {{ total }} | Bot Requests: {{ total_bot_requests }}</p>
+                <canvas id="trafficPie" height="200"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  let ipChart, honeypotChart, pieChart;
+
+  const ipLabels = {{ ip_labels|tojson|safe }};
+  const ipValues = {{ ip_values|tojson|safe }};
+
+  // Limit data points to last 30 for readability
+  const maxPoints = 30;
+  const labels = ipLabels.slice(-maxPoints);
+  const values = ipValues.slice(-maxPoints);
+
+  const ipCtx = document.getElementById('ipChart').getContext('2d');
+
+  const gradient = ipCtx.createLinearGradient(0, 0, 0, 400);
+  gradient.addColorStop(0, 'rgba(14, 165, 233, 0.8)');
+  gradient.addColorStop(1, 'rgba(3, 105, 161, 0.8)');
+
+  if (typeof ipChart !== 'undefined') {
+      ipChart.destroy();
+  }
+
+  ipChart = new Chart(ipCtx, {
+      type: 'bar',
+      data: {
+          labels: labels,
+          datasets: [{
+              label: 'Requests per IP (last 60s)',
+              data: values,
+              backgroundColor: gradient,
+              borderRadius: 6,
+              maxBarThickness: 70,
+              hoverBackgroundColor: 'rgba(14, 165, 233, 1)'
+          }]
+      },
+      options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+              y: {
+                  beginAtZero: true,
+                  grid: { color: '#e5e7eb' },
+                  ticks: { color: '#374151' }
+              },
+              x: {
+                  grid: { display: false },
+                  ticks: { color: '#374151', maxRotation: 45, minRotation: 45, maxTicksLimit: 10 }
+              }
+          },
+          plugins: {
+              legend: { display: false },
+              tooltip: {
+                  backgroundColor: 'rgba(59, 130, 246, 0.9)',
+                  titleColor: '#fff',
+                  bodyColor: '#fff',
+                  cornerRadius: 4
+              }
+          }
+      }
+  });
+
+  function initCharts(data) {
+    const honeypotCtx = document.getElementById('honeypotGraph').getContext('2d');
+    honeypotChart = new Chart(honeypotCtx, {
+      type: 'line',
+      data: {
+        labels: data.honeypot_graph_data.timestamps,
+        datasets: [{
+          label: 'HoneyCap Triggers Over Time',
+          data: data.honeypot_graph_data.counts,
+          borderColor: '#ef4444',
+          backgroundColor: 'rgba(239, 68, 68, 0.1)',
+          fill: true,
+          tension: 0.3
+        }]
+      },
+      options: {
+        scales: { y: { beginAtZero: true } },
+        elements: {
+          point: {
+            radius: 2
+          }
+        }
+      }
+    });
+
+    const pieCtx = document.getElementById('trafficPie').getContext('2d');
+    pieChart = new Chart(pieCtx, {
+      type: 'pie',
+      data: {
+        labels: ['Detected Bots', 'Normal Traffic'],
+        datasets: [{
+          data: [data.total_bot_requests, data.total - data.total_bot_requests],
+          backgroundColor: ['#ef4444', '#10b981']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { color: '#f1f5f9', font: { size: 14 } }
+          }
+        }
+      }
+    });
+  }
+
+  function updateCharts(data) {
+    const downsample = 4;
+    const hpLabels = data.honeypot_graph_data.timestamps.filter((_, i) => i % downsample === 0);
+    const hpData = data.honeypot_graph_data.counts.filter((_, i) => i % downsample === 0);
+    honeypotChart.data.labels = hpLabels;
+    honeypotChart.data.datasets[0].data = hpData;
+    honeypotChart.update();
+
+    pieChart.data.datasets[0].data = [data.total_bot_requests, data.total - data.total_bot_requests];
+    pieChart.update();
+
+    // Update summary cards text
+    document.querySelector('.summary-total p').textContent = data.total;
+    document.querySelector('.summary-honeycap p').textContent = data.honeypot_hits;
+    document.querySelector('.summary-rule p').textContent = data.rule_count;
+    document.querySelector('.summary-ml p').textContent = data.ml_count;
+    // Update pie chart stats line
+    document.querySelector('#trafficPie').previousElementSibling.textContent = `Total Requests: ${data.total} | Bot Requests: ${data.total_bot_requests}`;
+
+    const maxPoints = 30;
+    const labels = data.ip_labels.slice(-maxPoints);
+    const values = data.ip_values.slice(-maxPoints);
+    ipChart.data.labels = labels;
+    ipChart.data.datasets[0].data = values;
+    ipChart.update();
+  }
+
+  async function fetchDataAndUpdate() {
+    try {
+      const response = await fetch('/api/chart_data');
+      if (!response.ok) throw new Error('Network response was not ok');
+      const data = await response.json();
+
+      if (!honeypotChart || !pieChart || !ipChart) {
+        initCharts(data);
+      } else {
+        updateCharts(data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch chart data:', error);
+    }
+  }
+
+  // Initial call + periodic update every 2 seconds
+  fetchDataAndUpdate();
+  setInterval(fetchDataAndUpdate, 2000);
+</script>
+</body>
+</html>

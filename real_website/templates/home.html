@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>SentinelNet - Home</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #4338ca, #6d28d9);
+      color: #f8fafc;
+      overflow-x: hidden;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 50px;
+      background-color: rgba(30, 41, 59, 0.8);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      animation: slideDown 0.6s ease-out;
+    }
+
+    @keyframes slideDown {
+      from { top: -100px; opacity: 0; }
+      to { top: 0; opacity: 1; }
+    }
+
+    nav a {
+      margin: 0 15px;
+      text-decoration: none;
+      color: #a5f3fc;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: #facc15;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 100px 20px;
+    }
+
+    .hero h1 {
+      font-size: 3em;
+      color: #facc15;
+      margin-bottom: 20px;
+    }
+
+    .hero p {
+      font-size: 1.2em;
+      color: #d1d5db;
+      margin-bottom: 40px;
+    }
+
+    .cards {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+      padding: 20px;
+    }
+
+    .card {
+      background-color: rgba(255, 255, 255, 0.05);
+      padding: 30px;
+      border-radius: 12px;
+      width: 250px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      background-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .card a {
+      text-decoration: none;
+      color: #a5f3fc;
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+    }
+
+    .card a:hover {
+      color: #facc15;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div><strong>SentinelNet</strong></div>
+    <nav>
+      <a href="/home">Home</a>
+      <a href="/profile">Profile</a>
+      <a href="/search">Search</a>
+    </nav>
+  </header>
+
+  <div class="hero">
+    <h1>Welcome to SentinelNet</h1>
+    <p>This is a demo web interface for simulating user interaction and monitoring traffic behavior.</p>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <h3>Visit Your Profile</h3>
+      <p>Manage your personal information and view recent activity.</p>
+      <a href="/profile">Go to Profile</a>
+    </div>
+    <div class="card">
+      <h3>Search Data</h3>
+      <p>Try out fake search queries and simulate traffic behavior.</p>
+      <a href="/search">Go to Search</a>
+    </div>
+  </div>
+
+</body>
+</html>

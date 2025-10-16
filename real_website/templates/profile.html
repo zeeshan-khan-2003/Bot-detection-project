@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>User Profile</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1e3a8a, #312e81);
+      color: #f8fafc;
+      min-height: 100vh;
+      animation: fadeInBody 1s ease forwards;
+    }
+
+    @keyframes fadeInBody {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    header {
+      padding: 20px 40px;
+      background-color: rgba(30, 41, 59, 0.85);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+
+    nav a {
+      color: #67e8f9;
+      text-decoration: none;
+      margin: 0 15px;
+      font-weight: 600;
+      font-size: 1.1em;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: #facc15;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 50px auto;
+      background-color: rgba(255,255,255,0.05);
+      border-radius: 15px;
+      padding: 40px 60px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      animation: fadeInContent 1s ease 0.5s forwards;
+      opacity: 0;
+    }
+
+    @keyframes fadeInContent {
+      to { opacity: 1; }
+    }
+
+    h1 {
+      text-align: center;
+      color: #facc15;
+      font-size: 2.8em;
+      margin-bottom: 30px;
+      letter-spacing: 2px;
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+
+    .profile-picture {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 4px solid #facc15;
+      box-shadow: 0 0 15px #facc15cc;
+      flex-shrink: 0;
+    }
+
+    .profile-picture img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .user-info {
+      flex: 1;
+      color: #d1d5db;
+    }
+
+    .user-info h2 {
+      font-size: 2em;
+      margin-bottom: 10px;
+      color: #facc15;
+      letter-spacing: 1px;
+    }
+
+    .user-info p {
+      font-size: 1.1em;
+      margin: 6px 0;
+      line-height: 1.5;
+    }
+
+    .recent-activity {
+      background-color: rgba(255, 255, 255, 0.07);
+      padding: 30px;
+      border-radius: 12px;
+    }
+
+    .recent-activity h3 {
+      font-size: 1.8em;
+      margin-bottom: 20px;
+      color: #facc15;
+      letter-spacing: 1px;
+    }
+
+    .recent-activity ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .recent-activity li {
+      padding: 15px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      font-size: 1.1em;
+      color: #cbd5e1;
+      transition: background-color 0.3s ease;
+    }
+
+    .recent-activity li:last-child {
+      border-bottom: none;
+    }
+
+    .recent-activity li:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      cursor: default;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div><strong>SentinelNet</strong></div>
+    <nav>
+      <a href="/home">Home</a>
+      <a href="/profile">Profile</a>
+      <a href="/search">Search</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h1>User Profile</h1>
+
+    <section class="profile">
+      <div class="profile-picture">
+        <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="Profile Icon" />
+      </div>
+      <div class="user-info">
+        <h2>abc xyz</h2>
+        <p><strong>Email:</strong> xyz.abc@example.com</p>
+        <p><strong>Location:</strong> Mumbai, India</p>
+        <p><strong>Member since:</strong> January 2020</p>
+      </div>
+    </section>
+
+    <section class="recent-activity">
+      <h3>Recent Activity</h3>
+      <ul>
+        <li>Commented on "Top DDoS Protection Tools 2025"</li>
+        <li>Updated profile picture</li>
+        <li>Joined the "Cybersecurity Experts" group</li>
+        <li>Posted a new article on network security</li>
+      </ul>
+    </section>
+  </div>
+</body>
+</html>

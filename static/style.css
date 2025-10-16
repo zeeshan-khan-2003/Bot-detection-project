@@ -1,0 +1,85 @@
+body {
+  background-color: #0f172a;
+  color: #f1f5f9;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 220px;
+  background-color: #1e293b;
+  padding: 30px 20px;
+}
+
+.sidebar h2 {
+  color: #38bdf8;
+  margin-bottom: 20px;
+}
+
+.sidebar ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  margin: 15px 0;
+}
+
+.sidebar ul li a {
+  color: #f1f5f9;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.sidebar ul li a:hover {
+  text-decoration: underline;
+}
+
+.main-content {
+  margin-left: 240px;
+  padding: 30px;
+}
+
+.ml-badge {
+  background-color: #f97316;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 5px;
+  font-size: 0.9em;
+  display: inline-block;
+  margin: 3px;
+}
+
+.badge-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.no-activity-message {
+  background-color: #334155;
+  padding: 10px;
+  border-radius: 6px;
+  font-style: italic;
+  color: #94a3b8;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.chart-card {
+  background-color: #1e293b;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #334155;
+}

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rule-based Detection</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .chart-card canvas {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>SentinelNet</h2>
+        <ul>
+            <li><a href="/dashboard">Overview</a></li>
+            <li><a href="/rule_based">Rule-based Detection</a></li>
+            <li><a href="/ml_based">ML-based Detection</a></li>
+            <li><a href="/honeycap">HoneyCap Activity</a></li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <h1>Rule-based Detection</h1>
+        <div class="grid" style="gap: 10px;">
+            <div class="chart-card">
+                <style>
+                    .chart-card {
+                        padding: 20px;
+                    }
+                    .badge-group {
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: 6px;
+                    }
+                    .ml-badge {
+                        font-size: 12px;
+                        padding: 3px 6px;
+                    }
+                </style>
+                <div style="width: 100%; height: 450px;">
+                  <canvas id="ipChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <style>
+                    .chart-card {
+                        padding: 30px;
+                    }
+                    .badge-group {
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: 6px;
+                    }
+                    .ml-badge {
+                        font-size: 12px;
+                        padding: 3px 6px;
+                    }
+                </style>
+                <h3>Rule-based Detected IPs</h3>
+                {% if ddos_ips %}
+                <div class="badge-group">
+                    {% for ip in ddos_ips %}
+                    <span class="ml-badge">{{ ip }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="no-activity-message">No rule-based detections in the last 60 seconds.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ipLabels = {{ ip_labels|tojson|safe }};
+        const ipValues = {{ ip_values|tojson|safe }};
+
+        // Limit data points to last 30 for readability
+        const maxPoints = 30;
+        const labels = ipLabels.slice(-maxPoints);
+        const values = ipValues.slice(-maxPoints);
+
+        const ipCtx = document.getElementById('ipChart').getContext('2d');
+
+        const gradient = ipCtx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, 'rgba(14, 165, 233, 0.8)');  // Tailwind blue-500
+        gradient.addColorStop(1, 'rgba(3, 105, 161, 0.8)');  // Tailwind blue-800
+
+        new Chart(ipCtx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Requests per IP (last 60s)',
+                    data: values,
+                    backgroundColor: gradient,
+                    borderRadius: 6,  // Rounded corners
+                    maxBarThickness: 70,
+                    categoryPercentage: 0.8,
+                    hoverBackgroundColor: 'rgba(14, 165, 233, 1)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: '#e5e7eb'  // Tailwind gray-200
+                        },
+                        ticks: {
+                            color: '#374151'  // Tailwind gray-700
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: '#374151', // Tailwind gray-700
+                            maxRotation: 45,
+                            minRotation: 45,
+                            maxTicksLimit: 10
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(59, 130, 246, 0.9)',  // Tailwind blue-500
+                        titleColor: '#fff',
+                        bodyColor: '#fff',
+                        cornerRadius: 4
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
