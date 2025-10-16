@@ -2,5 +2,3 @@ venv/
 __pycache__/
 *.pyc
 .DS_Store
-traffic_data.json
-training_data.csv
