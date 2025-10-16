@@ -1,10 +1,11 @@
 from flask import Flask, render_template, request, abort, redirect
 import requests
 import time
+import os
 
 app = Flask(__name__)
 
-DASHBOARD_URL = "http://127.0.0.1:5001/log"
+DASHBOARD_URL = os.environ.get("DASHBOARD_URL", "http://127.0.0.1:5001/log")
 
 @app.before_request
 def log_request_info():

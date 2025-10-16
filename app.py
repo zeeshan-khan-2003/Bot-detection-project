@@ -9,7 +9,7 @@ from sklearn.preprocessing import StandardScaler  # Required for scaling feature
 RULE_BASED_THRESHOLD = 30
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'
+app.secret_key = os.environ.get('SECRET_KEY', 'dev')
 
 # Global traffic data
 traffic_data = []

@@ -8,6 +8,8 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.6
+      - key: SECRET_KEY
+        value: 318ec35cb52d3f46dc2c9076c7f023590619659f9eab511eb7e19c011c13e31e
   - type: web
     name: real-website
     env: python
@@ -17,3 +19,5 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.6
+      - key: DASHBOARD_URL
+        value: http://ddos-dashboard:10000/log
